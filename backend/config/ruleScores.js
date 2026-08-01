@@ -1,0 +1,12 @@
+module.exports = {
+    HTTP: 20,
+    IP_ADDRESS: 40,
+    LONG_URL: 10,
+    HYPHEN: 10,
+    SUBDOMAIN: 15,
+    SUSPICIOUS_TLD: 20,
+    BRAND_SPOOFING: 35,
+    SHORTENER: 25,
+    HIGH_ENTROPY: 20,
+    PUNYCODE: 30
+};

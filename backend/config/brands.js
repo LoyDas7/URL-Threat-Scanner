@@ -1,0 +1,21 @@
+module.exports = [
+    "google",
+    "paypal",
+    "amazon",
+    "facebook",
+    "instagram",
+    "microsoft",
+    "apple",
+    "github",
+    "linkedin",
+    "netflix",
+    "dropbox",
+    "adobe",
+    "bankofamerica",
+    "chase",
+    "wellsfargo",
+    "icici",
+    "hdfc",
+    "sbi",
+    "axisbank"
+];
