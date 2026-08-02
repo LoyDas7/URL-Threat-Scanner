@@ -1,6 +1,6 @@
 const { analyze } = require("../rules");
 
-const scanURL = (req, res) => {
+async function scanURL(req, res) {
 
     const { url } = req.body;
 
@@ -18,7 +18,8 @@ const scanURL = (req, res) => {
 
     try{
 
-        const result=analyze(url);
+        const result=await analyze(url);
+        console.log("RESULT =", result);
 
         res.json({
 

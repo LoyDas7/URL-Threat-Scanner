@@ -11,6 +11,8 @@ const SCORES = require("../config/ruleScores");
 const unicodeRule = require("./unicodeRule");
 const keywordRule = require("./keywordRule");
 const whoisRule=require("./whoisRule");
+const dnsRule=require("./dnsRule");
+const sslRule = require("./sslRule");
 
 const calculateVerdict=require("../utils/scoreCalculator");
 
@@ -30,7 +32,9 @@ async function analyze(url){
         punycodeRule,
         unicodeRule,
         keywordRule,
-        whoisRule
+        whoisRule,
+        dnsRule,
+        sslRule
     ];
 
     let score=0;
@@ -39,6 +43,7 @@ async function analyze(url){
     for(const rule of rules){
 
         const result=await rule(parsed,url);
+         console.log(rule.name, result);
 
         score+=result.score;
 
