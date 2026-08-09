@@ -19,7 +19,12 @@ module.exports=(parsed)=>{
 
         score,
 
-        findings
+        findings,
+        metadata: {
+    subdomain: {
+        count: count
+    }
+}
 
     };
 

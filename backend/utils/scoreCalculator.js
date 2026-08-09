@@ -1,13 +1,17 @@
-function calculateVerdict(score){
+const SCORE = require("../config/riskConfig");
 
-    if(score>=60)
-        return "High Risk";
+function calculateVerdict(score) {
 
-    if(score>=30)
-        return "Medium Risk";
+    if (score >= SCORE.CRITICAL)
+        return SCORE.VERDICTS.CRITICAL;
 
-    return "Safe";
+    if (score >= SCORE.HIGH)
+        return SCORE.VERDICTS.HIGH_RISK;
 
+    if (score >= SCORE.MEDIUM)
+        return SCORE.VERDICTS.MEDIUM_RISK;
+
+    return SCORE.VERDICTS.SAFE;
 }
 
 module.exports = calculateVerdict;

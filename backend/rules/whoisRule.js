@@ -3,7 +3,6 @@ const { getWhois } = require("../services/whoisService");
 module.exports = async (parsed) => {
 
     let score = 0;
-
     const findings = [];
 
     const domain = parsed.hostname;
@@ -14,25 +13,36 @@ module.exports = async (parsed) => {
 
         return {
             score,
-            findings
+            findings,
+            metadata: {
+                whois: {
+                    registrar: null,
+                    creationDate: null,
+                    ageDays: null,
+                    recentlyRegistered: false
+                }
+            }
         };
 
     }
+
+    let ageDays = null;
 
     if (data.creationDate) {
 
         const created = new Date(data.creationDate);
 
-        const age =
+        ageDays = Math.floor(
             (Date.now() - created.getTime()) /
-            (1000 * 60 * 60 * 24);
+            (1000 * 60 * 60 * 24)
+        );
 
-        if (age < 180) {
+        if (ageDays < 180) {
 
             score += 30;
 
             findings.push(
-                `Newly registered domain (${Math.floor(age)} days old)`
+                `Newly registered domain (${ageDays} days old)`
             );
 
         }
@@ -43,7 +53,16 @@ module.exports = async (parsed) => {
 
         score,
 
-        findings
+        findings,
+
+        metadata: {
+            whois: {
+                registrar: data.registrar || null,
+                creationDate: data.creationDate || null,
+                ageDays,
+                recentlyRegistered: ageDays !== null && ageDays < 180
+            }
+        }
 
     };
 

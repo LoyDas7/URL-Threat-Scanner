@@ -8,9 +8,15 @@ module.exports = async (parsed) => {
     if (parsed.protocol !== "https:") {
 
         return {
-            score,
-            findings
-        };
+        score,
+        findings,
+        metadata: {
+            ssl: {
+                enabled: false,
+                reachable: false
+            }
+        }
+    };
 
     }
 
@@ -23,9 +29,15 @@ module.exports = async (parsed) => {
         findings.push("Unable to retrieve SSL certificate");
 
         return {
-            score,
-            findings
-        };
+        score,
+        findings,
+        metadata: {
+            ssl: {
+                enabled: true,
+                reachable: false
+            }
+        }
+    };
 
     }
 
@@ -67,7 +79,18 @@ module.exports = async (parsed) => {
 
         score,
 
-        findings
+        findings,
+        metadata: {
+    ssl: {
+    reachable: true,
+    issuer: cert.issuer,
+    validTo: cert.valid_to,
+    selfSigned:
+        cert.issuer &&
+        cert.subject &&
+        JSON.stringify(cert.issuer) === JSON.stringify(cert.subject)
+}
+}
 
     };
 

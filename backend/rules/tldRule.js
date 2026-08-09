@@ -23,7 +23,13 @@ module.exports=(parsed)=>{
 
         score,
 
-        findings
+        findings,
+        metadata: {
+    tld: {
+        value: tld,
+        suspicious: SUSPICIOUS_TLDS.includes(tld)
+    }
+}
 
     };
 

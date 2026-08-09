@@ -17,7 +17,13 @@ module.exports=(parsed)=>{
 
         score,
 
-        findings
+        findings,
+        metadata: {
+    domain: {
+        hostname: parsed.hostname,
+        hasHyphen: parsed.hostname.includes("-")
+    }
+}
 
     };
 

@@ -1,3 +1,4 @@
+const SCORES = require("../config/ruleScores");
 module.exports=(parsed)=>{
 
     let score=0;
@@ -6,7 +7,7 @@ module.exports=(parsed)=>{
 
     if(parsed.protocol!=="https:"){
 
-        score+=20;
+        score += SCORES.HTTP;
 
         findings.push("Uses HTTP instead of HTTPS");
 
@@ -16,7 +17,13 @@ module.exports=(parsed)=>{
 
         score,
 
-        findings
+        findings,
+        metadata: {
+    protocol: {
+        protocol: parsed.protocol,
+        secure: parsed.protocol === "https:"
+    }
+}
 
     };
 

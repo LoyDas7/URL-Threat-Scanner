@@ -21,8 +21,15 @@ module.exports = async (parsed) => {
 
         return {
             score,
-            findings
+            findings,
+            metadata: {
+                dns: {
+                    mxRecords: [],
+                    nsRecords: []
+                }
+            }
         };
+
     }
 
     const mx = await getMX(domain);
@@ -47,7 +54,13 @@ module.exports = async (parsed) => {
 
     return {
         score,
-        findings
+        findings,
+        metadata: {
+            dns: {
+                mxRecords: mx,
+                nsRecords: ns
+            }
+        }
     };
 
 };

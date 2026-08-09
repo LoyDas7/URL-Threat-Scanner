@@ -23,7 +23,12 @@ module.exports = (parsed) => {
 
     return {
         score,
-        findings
+        findings,
+        metadata: {
+    keywords: {
+        matched: matchedKeywords
+    }
+}
     };
 
 };

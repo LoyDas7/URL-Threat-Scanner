@@ -8,7 +8,7 @@ module.exports = (parsed) => {
 
     if (hostname.startsWith("xn--") || hostname.includes(".xn--")) {
 
-        score += 30;
+        score += SCORES.PUNYCODE;
 
         findings.push(
             "Uses Punycode (possible Unicode homograph attack)"
@@ -18,7 +18,12 @@ module.exports = (parsed) => {
 
     return {
         score,
-        findings
+        findings,
+        metadata: {
+    punycode: {
+        detected: parsed.hostname.startsWith("xn--")
+    }
+}
     };
 
 };

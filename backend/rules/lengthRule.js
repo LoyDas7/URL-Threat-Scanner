@@ -17,7 +17,12 @@ module.exports=(parsed,url)=>{
 
         score,
 
-        findings
+        findings,
+        metadata: {
+    urlLength: {
+        length: url.length
+    }
+}
 
     };
 

@@ -1,9 +1,14 @@
+require("dotenv").config();
 const express = require("express");
+
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 
 const scanRoutes = require("./routes/scan");
+const reportRoutes = require("./routes/report");
+
+
 
 const app = express();
 
@@ -22,6 +27,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/scan", scanRoutes);
+app.use("/api/report", reportRoutes);
 
 // 404 Handler
 app.use((req, res) => {
@@ -31,8 +37,9 @@ app.use((req, res) => {
     });
 });
 
-const PORT = 5000;
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on port ${PORT}`);
 });

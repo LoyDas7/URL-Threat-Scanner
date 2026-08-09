@@ -7,6 +7,7 @@ module.exports = (parsed) => {
 
     // Detect any non-ASCII character
     const unicodeRegex = /[^\x00-\x7F]/;
+    const hasUnicode = /[^\x00-\x7F]/.test(parsed.hostname);
 
     if (unicodeRegex.test(hostname)) {
 
@@ -20,7 +21,12 @@ module.exports = (parsed) => {
 
     return {
         score,
-        findings
+        findings,
+        metadata: {
+    unicode: {
+        detected: hasUnicode
+    }
+}
     };
 
 };

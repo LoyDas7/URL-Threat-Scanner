@@ -1,25 +1,28 @@
-module.exports=(parsed)=>{
+const SCORES = require("../config/ruleScores");
+const net = require("net");
+module.exports = (parsed) => {
 
-    let score=0;
+    let score = 0;
+    const findings = [];
 
-    let findings=[];
+    const isIPAddress = net.isIP(parsed.hostname) !== 0;
 
-    const ipRegex=/^(\d{1,3}\.){3}\d{1,3}$/;
+    if (isIPAddress) {
 
-    if(ipRegex.test(parsed.hostname)){
-
-        score+=40;
-
-        findings.push("Uses IP Address");
+        score += SCORES.IP_ADDRESS;
+        findings.push("IP Address used instead of domain");
 
     }
 
-    return{
-
+    return {
         score,
-
-        findings
-
+        findings,
+        metadata: {
+            ipAddress: {
+                hostname: parsed.hostname,
+                isIPAddress
+            }
+        }
     };
 
 };

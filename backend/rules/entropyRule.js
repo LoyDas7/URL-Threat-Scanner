@@ -1,3 +1,5 @@
+
+const SCORES = require("../config/ruleScores");
 module.exports = (parsed) => {
 
     let score = 0;
@@ -26,7 +28,7 @@ module.exports = (parsed) => {
 
     // Threshold
     if (entropy > 3.5) {
-        score += 20;
+        score += SCORES.HIGH_ENTROPY;
 
         findings.push(
             `High domain entropy (${entropy.toFixed(2)})`
@@ -35,7 +37,12 @@ module.exports = (parsed) => {
 
     return {
         score,
-        findings
+        findings,
+        metadata: {
+    entropy: {
+        value: entropy
+    }
+}
     };
 
 };
