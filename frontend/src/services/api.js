@@ -31,15 +31,31 @@ export async function scanUrl(url) {
     throw normalizeError(error);
   }
 }
+
 /**
  * Builds the download URL for a previously generated PDF report.
  * Does not call the backend itself - the browser navigates/downloads
  * directly from this URL. Points at the existing report route,
- * `${VITE_API_URL}/api/reports/:fileName`.
+ * `${VITE_API_URL}/api/report/:fileName`.
  */
 export function getReportUrl(fileName) {
   if (!fileName) return null;
   return `${API_BASE_URL}/api/report/${encodeURIComponent(fileName)}`;
+}
+
+/**
+ * Sends a message (initial explanation request or a follow-up question)
+ * to the AI Security Assistant, along with the current scan's summary.
+ * Returns the raw response payload from POST /api/ai/chat, e.g. { reply }.
+ * Throws the same normalized error shape as scanUrl.
+ */
+export async function askAI(message, scanResult) {
+  try {
+    const response = await client.post("/api/ai/chat", { message, scanResult });
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
 }
 
 function normalizeError(error) {
