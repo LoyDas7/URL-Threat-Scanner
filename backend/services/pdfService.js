@@ -524,6 +524,8 @@ doc.y = findingsY + findingsHeight + 15;
 // DOMAIN INFORMATION
 // ======================================================
 
+ensureSpace(155);
+
 sectionTitle("DOMAIN INFORMATION");
 
 const domainX = 40;
@@ -543,29 +545,72 @@ doc.roundedRect(
     COLORS.border
 );
 
-doc.y = domainY + 12;
+// --------------------
+// Row function
+// --------------------
 
-infoRow(
+function domainRow(label, value, y) {
+
+    doc.fillColor(COLORS.gray)
+        .font("Helvetica-Bold")
+        .fontSize(9)
+        .text(
+            label + " :",
+            domainX + 12,
+            y,
+            {
+                width: 100,
+                lineBreak: false
+            }
+        );
+
+    doc.fillColor(COLORS.black)
+        .font("Helvetica")
+        .fontSize(9)
+        .text(
+            String(value ?? "-"),
+            domainX + 115,
+            y,
+            {
+                width: domainWidth - 130,
+                lineBreak: false
+            }
+        );
+}
+
+// --------------------
+// Rows
+// --------------------
+
+domainRow(
     "Registrar",
-    scanResult.metadata.whois?.registrar || "Unknown"
+    scanResult.metadata.whois?.registrar || "Unknown",
+    domainY + 15
 );
 
-infoRow(
+domainRow(
     "Creation Date",
-    scanResult.metadata.whois?.creationDate || "Unknown"
+    scanResult.metadata.whois?.creationDate || "Unknown",
+    domainY + 33
 );
 
-infoRow(
+domainRow(
     "Domain Age",
     scanResult.metadata.whois?.ageDays != null
         ? `${scanResult.metadata.whois.ageDays} Days`
-        : "Unknown"
+        : "Unknown",
+    domainY + 51
 );
 
-infoRow(
+domainRow(
     "Top Level Domain",
-    scanResult.metadata.tld?.value?.toUpperCase() || "-"
+    scanResult.metadata.tld?.value?.toUpperCase() || "-",
+    domainY + 69
 );
+
+// --------------------
+// Move below card
+// --------------------
 
 doc.y = domainY + domainHeight + 15;
 // ======================================================
