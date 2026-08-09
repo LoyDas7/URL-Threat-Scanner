@@ -1,0 +1,42 @@
+[33mcommit 5421ddaa574fc1498ced11de3e597c90efff9dfb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: LoyDas7 <nd20051007@gmail.com>
+Date:   Sun Aug 9 10:26:16 2026 +0530
+
+    Add threat intelligence metadata to scan response
+
+ backend/app.js                                |   13 [32m+[m[31m-[m
+ backend/assets/logo.png                       |  Bin [31m0[m -> [32m136835[m bytes
+ backend/config/brands.js                      |  304 [32m++++++[m[31m-[m
+ backend/config/constants.js                   |  223 [32m++++[m[31m-[m
+ backend/config/riskConfig.js                  |   16 [32m+[m[31m-[m
+ backend/config/ruleScores.js                  |   78 [32m+[m[31m-[m
+ backend/controllers/reportController.js       |   15 [32m+[m
+ backend/controllers/scanController.js         |   49 [32m+[m[31m-[m
+ backend/routes/report.js                      |    9 [32m+[m
+ backend/rules/atSymbolRule.js                 |   28 [32m+[m
+ backend/rules/brandRule.js                    |   19 [32m+[m[31m-[m
+ backend/rules/dnsRule.js                      |   17 [32m+[m[31m-[m
+ backend/rules/entropyRule.js                  |   11 [32m+[m[31m-[m
+ backend/rules/googleSafeBrowsingRule.js       |   59 [32m++[m
+ backend/rules/hyphenRule.js                   |    8 [32m+[m[31m-[m
+ backend/rules/index.js                        |  134 [32m++[m[31m-[m
+ backend/rules/ipRule.js                       |   31 [32m+[m[31m-[m
+ backend/rules/keywordRule.js                  |    7 [32m+[m[31m-[m
+ backend/rules/lengthRule.js                   |    7 [32m+[m[31m-[m
+ backend/rules/protocolRule.js                 |   11 [32m+[m[31m-[m
+ backend/rules/punycodeRule.js                 |    9 [32m+[m[31m-[m
+ backend/rules/redirectRule.js                 |   67 [32m++[m
+ backend/rules/sslRule.js                      |   37 [32m+[m[31m-[m
+ backend/rules/subdomainRule.js                |    7 [32m+[m[31m-[m
+ backend/rules/tldRule.js                      |    8 [32m+[m[31m-[m
+ backend/rules/unicodeRule.js                  |    8 [32m+[m[31m-[m
+ backend/rules/virusTotalRule.js               |   92 [32m++[m
+ backend/rules/whoisRule.js                    |   33 [32m+[m[31m-[m
+ backend/services/googleSafeBrowsingService.js |   49 [32m++[m
+ backend/services/pdfService.js                | 1144 [32m+++++++++++++++++++++++++[m
+ backend/services/redirectService.js           |   82 [32m++[m
+ backend/services/virusTotalService.js         |   73 [32m++[m
+ backend/utils/scoreCalculator.js              |   16 [32m+[m[31m-[m
+ package-lock.json                             |  419 [32m+++++++++[m
+ package.json                                  |    2 [32m+[m
+ 35 files changed, 2931 insertions(+), 154 deletions(-)
