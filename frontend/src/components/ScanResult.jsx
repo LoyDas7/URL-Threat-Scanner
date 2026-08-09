@@ -1,3 +1,4 @@
+// src/components/ScanResult.jsx
 import VerdictBadge from "./VerdictBadge.jsx";
 import RiskScore from "./RiskScore.jsx";
 import FindingsList from "./FindingsList.jsx";
@@ -50,10 +51,10 @@ export default function ScanResult({ result }) {
         </div>
       </section>
 
-      {/* Rendered outside the animated section on purpose - this widget uses
-          position: fixed internally, and any transformed ancestor (the
-          fade-up/card-in animations above use transform) would re-anchor
-          "fixed" to that ancestor instead of the real viewport. */}
+      {/* AISecurityAssistant renders itself via a portal onto <body>, so its
+          position: fixed button/panel stay pinned to the real viewport
+          regardless of where it's placed here or what transforms exist
+          on ancestors (e.g. route page-fade animations). */}
       <AISecurityAssistant key={scannedURL} scanResult={result} />
     </>
   );

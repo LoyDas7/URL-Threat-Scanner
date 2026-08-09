@@ -1,4 +1,6 @@
+// src/components/AI/AISecurityAssistant.jsx
 import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Sparkles, MessageCircle, X, Loader2, Send, AlertCircle } from "lucide-react";
 import { askAI } from "../../services/api.js";
 
@@ -61,7 +63,12 @@ export default function AISecurityAssistant({ scanResult }) {
     sendMessage(trimmed);
   }
 
-  return (
+  // Rendered via a portal straight onto <body> - this makes "position:
+  // fixed" anchor to the true browser viewport no matter what, immune to
+  // any ancestor's CSS transform (e.g. App.jsx's route page-fade
+  // animation), which would otherwise re-anchor it and make the button
+  // drift with scrolling instead of staying pinned to the corner.
+  return createPortal(
     <>
       {/* Floating launcher button, bottom-right - stays fixed to the
           viewport regardless of scroll position. */}
@@ -176,6 +183,7 @@ export default function AISecurityAssistant({ scanResult }) {
           )}
         </div>
       )}
-    </>
+    </>,
+    document.body
   );
 }
