@@ -3,6 +3,7 @@ import RiskScore from "./RiskScore.jsx";
 import FindingsList from "./FindingsList.jsx";
 import MetadataDashboard from "./MetadataDashboard.jsx";
 import DownloadReportButton from "./DownloadReportButton.jsx";
+import AISecurityAssistant from "./AI/AISecurityAssistant.jsx";
 import { truncateMiddle } from "../utils/formatters.js";
 
 export default function ScanResult({ result }) {
@@ -45,6 +46,10 @@ export default function ScanResult({ result }) {
 
       <div className="mt-8 animate-card-in" style={{ animationDelay: "140ms" }}>
         <MetadataDashboard metadata={metadata} />
+      </div>
+
+      <div className="mt-8 animate-card-in" style={{ animationDelay: "200ms" }}>
+        <AISecurityAssistant key={scannedURL} scanResult={result} />
       </div>
     </section>
   );

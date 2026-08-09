@@ -9,6 +9,7 @@ const morgan = require("morgan");
 
 const scanRoutes = require("./routes/scan");
 const reportRoutes = require("./routes/report");
+const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
 
@@ -28,7 +29,13 @@ app.get("/", (req, res) => {
 
 app.use("/api/scan", scanRoutes);
 app.use("/api/report", reportRoutes);
-
+app.use("/api/ai", aiRoutes);
+app.get("/api/test", (req, res) => {
+    res.json({
+        success: true,
+        message: "API is working"
+    });
+});
 // 404 Handler
 app.use((req, res) => {
     res.status(404).json({
