@@ -1,15 +1,16 @@
 import { useRef, useState } from "react";
-import { Sparkles, Loader2, Send, AlertCircle } from "lucide-react";
+import { Sparkles, MessageCircle, X, Loader2, Send, AlertCircle } from "lucide-react";
 import { askAI } from "../../services/api.js";
 
 /**
- * Compact, scan-scoped chat card. Not a general-purpose chatbot -
- * every message it sends includes the current scan's score/verdict/findings
- * so the backend (Groq) can answer in that context. Nothing here calls
- * Groq directly, and no API key ever touches this file - it only talks
- * to POST /api/ai/chat through the shared api.js service.
+ * Floating chat widget (WhatsApp/Messenger-style): a fixed round button
+ * in the corner that toggles a popup panel. Scan-scoped, not a general
+ * chatbot - every message includes the current scan's score/verdict/
+ * findings/metadata so the backend (Groq) can answer in that context.
+ * Nothing here calls Groq directly - only POST /api/ai/chat via api.js.
  */
 export default function AISecurityAssistant({ scanResult }) {
+  const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,8 +19,8 @@ export default function AISecurityAssistant({ scanResult }) {
 
   const hasStarted = messages.length > 0;
 
-  // Includes metadata (DNS, SSL, WHOIS, etc.) so the AI can explain those
-  // sections specifically, not just the top-level score/verdict/findings.
+  if (!scanResult) return null;
+
   function buildScanSummary() {
     return {
       score: scanResult.score,
@@ -60,115 +61,121 @@ export default function AISecurityAssistant({ scanResult }) {
     sendMessage(trimmed);
   }
 
-  if (!scanResult) {
-    return (
-      <div className="rounded-xl border border-base-border bg-base-surface p-5">
-        <div className="flex items-center gap-2.5">
-          <Sparkles size={18} className="text-accent" />
-          <h3 className="font-display text-sm font-semibold tracking-wide text-ink-primary">
-            AI Security Assistant
-          </h3>
-        </div>
-        <p className="mt-3 text-sm text-ink-muted">
-          Scan a URL first to use the AI Security Assistant.
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="rounded-xl border border-base-border bg-base-surface p-5">
-      <div className="flex items-center gap-2.5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
-          <Sparkles size={18} strokeWidth={2} />
-        </div>
-        <div>
-          <h3 className="font-display text-sm font-semibold tracking-wide text-ink-primary">
-            AI Security Assistant
-          </h3>
-          {!hasStarted && (
-            <p className="mt-0.5 text-xs text-ink-muted">
-              Understand your scan result in simple language.
-            </p>
-          )}
-        </div>
-      </div>
-
-      {!hasStarted && (
-        <button
-          type="button"
-          onClick={handleExplainClick}
-          disabled={loading}
-          className="btn-press mt-4 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-base-bg transition-colors duration-200 hover:bg-accent-glow disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {loading ? (
-            <>
-              <Loader2 size={16} className="animate-spin" />
-              Analyzing...
-            </>
-          ) : (
-            <>
-              <Sparkles size={16} />
-              Ask AI to Explain
-            </>
-          )}
-        </button>
-      )}
-
-      {loading && (
-        <p className="mt-3 flex animate-fade-up items-center gap-2 text-sm text-ink-secondary">
-          <Loader2 size={14} className="animate-spin text-accent" />
-          AI is analyzing the scan result...
-        </p>
-      )}
-
-      {hasStarted && (
-        <div className="mt-4 max-h-96 space-y-3 overflow-y-auto pr-1">
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`animate-card-in max-w-[85%] rounded-lg px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
-                msg.role === "ai"
-                  ? "bg-base-raised text-ink-primary"
-                  : "ml-auto bg-accent/10 text-ink-primary"
-              }`}
-            >
-              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
-                {msg.role === "ai" ? "AI" : "You"}
-              </span>
-              {msg.content}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {error && (
-        <p className="mt-3 flex animate-fade-up items-center gap-1.5 text-sm text-risk-critical" role="alert">
-          <AlertCircle size={15} />
-          {error}
-        </p>
-      )}
-
-      {hasStarted && (
-        <form onSubmit={handleFollowUpSubmit} className="mt-4 flex items-center gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            disabled={loading}
-            placeholder="Ask something about this scan..."
-            className="min-w-0 flex-1 rounded-lg border border-base-border bg-base-raised px-3.5 py-2.5 text-sm text-ink-primary placeholder:text-ink-muted transition-colors duration-200 focus:border-accent/60 focus:outline-none disabled:opacity-60"
+    <>
+      {/* Floating launcher button, bottom-right - stays fixed to the
+          viewport regardless of scroll position. */}
+      <button
+        type="button"
+        onClick={() => setIsOpen((v) => !v)}
+        aria-label={isOpen ? "Close AI Security Assistant" : "Open AI Security Assistant"}
+        aria-expanded={isOpen}
+        className="btn-press fixed bottom-5 right-5 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-accent text-base-bg shadow-glow transition-colors duration-200 hover:bg-accent-glow sm:bottom-6 sm:right-6"
+      >
+        {isOpen ? <X size={22} /> : <MessageCircle size={22} strokeWidth={2.25} />}
+        {!isOpen && !hasStarted && (
+          <span
+            className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-base-bg bg-risk-safe"
+            aria-hidden="true"
           />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            aria-label="Send question to AI Security Assistant"
-            className="btn-press flex shrink-0 items-center justify-center rounded-lg bg-accent p-2.5 text-base-bg transition-colors duration-200 hover:bg-accent-glow disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Send size={16} />
-          </button>
-        </form>
+        )}
+      </button>
+
+      {/* Popup panel */}
+      {isOpen && (
+        <div className="fixed bottom-24 right-5 z-[60] flex h-[28rem] max-h-[70vh] w-[calc(100vw-2.5rem)] max-w-sm origin-bottom-right animate-fade-scale-in flex-col overflow-hidden rounded-2xl border border-base-border bg-base-surface shadow-2xl sm:bottom-[6.5rem] sm:right-6">
+          {/* Header */}
+          <div className="flex items-center gap-2.5 border-b border-base-border/60 p-4">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+              <Sparkles size={18} strokeWidth={2} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="font-display text-sm font-semibold tracking-wide text-ink-primary">
+                AI Security Assistant
+              </h3>
+              {!hasStarted && (
+                <p className="mt-0.5 truncate text-xs text-ink-muted">
+                  Understand your scan result in simple language.
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              aria-label="Close AI Security Assistant"
+              className="rounded-md p-1.5 text-ink-muted transition-colors duration-150 hover:bg-base-raised hover:text-ink-primary"
+            >
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* Body */}
+          <div className="flex-1 space-y-3 overflow-y-auto p-4">
+            {!hasStarted && !loading && (
+              <button
+                type="button"
+                onClick={handleExplainClick}
+                className="btn-press inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-base-bg transition-colors duration-200 hover:bg-accent-glow"
+              >
+                <Sparkles size={16} />
+                Ask AI to Explain
+              </button>
+            )}
+
+            {loading && (
+              <p className="flex animate-fade-up items-center gap-2 text-sm text-ink-secondary">
+                <Loader2 size={14} className="animate-spin text-accent" />
+                AI is analyzing the scan result...
+              </p>
+            )}
+
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                className={`animate-card-in max-w-[85%] rounded-lg px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+                  msg.role === "ai"
+                    ? "bg-base-raised text-ink-primary"
+                    : "ml-auto bg-accent/10 text-ink-primary"
+                }`}
+              >
+                <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
+                  {msg.role === "ai" ? "AI" : "You"}
+                </span>
+                {msg.content}
+              </div>
+            ))}
+
+            {error && (
+              <p className="flex animate-fade-up items-center gap-1.5 text-sm text-risk-critical" role="alert">
+                <AlertCircle size={15} />
+                {error}
+              </p>
+            )}
+          </div>
+
+          {/* Follow-up input */}
+          {hasStarted && (
+            <form onSubmit={handleFollowUpSubmit} className="flex items-center gap-2 border-t border-base-border/60 p-3">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                disabled={loading}
+                placeholder="Ask something about this scan..."
+                className="min-w-0 flex-1 rounded-lg border border-base-border bg-base-raised px-3.5 py-2.5 text-sm text-ink-primary placeholder:text-ink-muted transition-colors duration-200 focus:border-accent/60 focus:outline-none disabled:opacity-60"
+              />
+              <button
+                type="submit"
+                disabled={loading || !input.trim()}
+                aria-label="Send question to AI Security Assistant"
+                className="btn-press flex shrink-0 items-center justify-center rounded-lg bg-accent p-2.5 text-base-bg transition-colors duration-200 hover:bg-accent-glow disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Send size={16} />
+              </button>
+            </form>
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 }
