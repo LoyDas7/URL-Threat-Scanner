@@ -19,6 +19,13 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 
+// Health check / Render wake-up endpoint
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "ok"
+    });
+});
+
 // Routes
 app.get("/", (req, res) => {
     res.json({
@@ -30,12 +37,7 @@ app.get("/", (req, res) => {
 app.use("/api/scan", scanRoutes);
 app.use("/api/report", reportRoutes);
 app.use("/api/ai", aiRoutes);
-app.get("/api/test", (req, res) => {
-    res.json({
-        success: true,
-        message: "API is working"
-    });
-});
+
 // 404 Handler
 app.use((req, res) => {
     res.status(404).json({
