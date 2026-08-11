@@ -58,6 +58,18 @@ export async function askAI(message, scanResult) {
   }
 }
 
+/**
+ * Pings the backend's health endpoint - used only at startup to wake a
+ * sleeping Render instance and to know when the app is ready to use.
+ * Uses its own longer timeout (Render cold starts can take a while) rather
+ * than the shared client default, and deliberately doesn't go through
+ * normalizeError - callers just need success/failure, not a UI message.
+ */
+export async function checkHealth() {
+  const response = await client.get("/health", { timeout: 90000 });
+  return response.data;
+}
+
 function normalizeError(error) {
   if (axios.isAxiosError(error)) {
     if (error.code === "ECONNABORTED") {
