@@ -37,7 +37,7 @@ Keep the response clear and reasonably short.
 `;
 
     const response = await client.chat.completions.create({
-        model: "llama-3.1-8b-instant",
+        model: "openai/gpt-oss-20b",
         messages: [
             {
                 role: "user",

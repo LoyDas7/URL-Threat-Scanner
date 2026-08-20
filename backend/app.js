@@ -14,8 +14,36 @@ const aiRoutes = require("./routes/aiRoutes");
 const app = express();
 
 // Middlewares
-app.use(cors());
-app.use(helmet());
+// Middlewares
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
+const allowedOrigins = [
+  "https://scantheurl.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000" // added common react/next port as well
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, curl, or Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
 app.use(morgan("dev"));
 app.use(express.json());
 
